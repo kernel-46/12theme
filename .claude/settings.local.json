@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import sys; sys.path.insert\\(0, '.'\\); from backend import config, db, state_machine, session; from backend.services import asr, nlu, dialect, sentiment, verification, pii, audit, learning, groq_client; print\\('OK imports'\\)\")",
+      "Bash(curl -fsS http://127.0.0.1:8000/api/health)",
+      "Bash(pkill -f \"uvicorn.*backend.main\")",
+      "Bash(python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('rows:', d['rows'], '| ok:', d['ok']\\)\")",
+      "Bash(curl -fsS http://127.0.0.1:8000/api/analytics)",
+      "Bash(python -c ' *)",
+      "Bash(curl -fsS -X POST http://127.0.0.1:8000/api/calls/start -H \"Content-Type: application/json\" -d \"{}\")",
+      "Bash(python -m json.tool)",
+      "Bash(curl -i http://127.0.0.1:8000/api/audit/verify)",
+      "Bash(pkill -9 -f \"uvicorn\")",
+      "Bash(pkill -9 -f \"spawn_main\")",
+      "Bash(curl -fsS http://127.0.0.1:8000/openapi.json)",
+      "Bash(grep -v grep echo \"---\")",
+      "Bash(tasklist /FI \"IMAGENAME eq python.exe\")",
+      "Bash(curl -v http://127.0.0.1:8000/api/audit/verify)",
+      "PowerShell(Stop-Process -Force)",
+      "PowerShell(\"killed\")",
+      "Bash(python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('per-call verify ok:', d['ok'], '| rows:', d['rows'], '| issues:', d['issues']\\)\")",
+      "Bash(curl -fsS http://127.0.0.1:8000/api/audit/verify)",
+      "Bash(pip install *)",
+      "Bash(python -c \"import edge_tts; print\\('edge_tts version:', edge_tts.__version__ if hasattr\\(edge_tts,'__version__'\\) else 'ok'\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('audit ok:', d['ok'], '| rows:', d['rows']\\)\")",
+      "Bash(curl -s -o /dev/null -w \"health=%{http_code}\\\\n\" http://127.0.0.1:8000/api/health)",
+      "Bash(curl -s -o /dev/null -w \"citizen=%{http_code}\\\\n\" http://127.0.0.1:8000/citizen)",
+      "Bash(curl -s -o /dev/null -w \"agent=%{http_code}\\\\n\" http://127.0.0.1:8000/agent)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('  ok:', d['ok'], '| rows:', d['rows']\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(' state:', d['state'], '| reasons:', d.get\\('decision_reasons'\\)\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(' ok:', d['ok'], '| rows:', d['rows']\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('audit:', d['ok'], 'rows:', d['rows']\\)\")",
+      "Bash(PYTHONIOENCODING=utf-8 curl -fsS -X POST \"http://127.0.0.1:8000/api/calls/start\" -H \"Content-Type: application/json\" -d \"{}\")",
+      "Bash(python -c \"import sys,json; print\\('  call:', json.load\\(sys.stdin\\)['call_id']\\)\")",
+      "Bash(curl -fsS -X POST \"http://127.0.0.1:8000/api/calls/start\" -H \"Content-Type: application/json\" -d \"{}\")"
+    ]
+  }
+}

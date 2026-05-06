@@ -1,0 +1,27 @@
+{
+  "task": "transcribe",
+  "language": "English",
+  "duration": 2,
+  "text": " .",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 2,
+      "text": " .",
+      "tokens": [
+        50365,
+        2411,
+        50465
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.66692674,
+      "compression_ratio": 0.11111111,
+      "no_speech_prob": 0.8369312
+    }
+  ],
+  "x_groq": {
+    "id": "req_01kqyh7sd0fjgbrcc3edgw0g6v"
+  }
+}

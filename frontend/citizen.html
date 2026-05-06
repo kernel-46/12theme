@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0a1628" />
+<title>1092 — Karnataka Women &amp; Child Helpline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Noto+Sans+Kannada&family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css?v=1778130000">
+<script>
+  (function(){ try { const t = localStorage.getItem("pratyaya:theme"); if (t) document.documentElement.dataset.theme = t; } catch{} })();
+</script>
+</head>
+<body data-page="citizen" class="citizen-page">
+
+<a href="#main-content" class="skip-link">Skip to call interface</a>
+
+<!-- Government attribution banner — always visible -->
+<header class="gov-banner" role="banner">
+  <div class="left">
+    <span>Government of Karnataka</span>
+    <span>1092 · Women &amp; Child Helpline</span>
+  </div>
+  <div class="right">Pratyaya AI Assist</div>
+</header>
+
+<main class="citizen-main" id="main-content" role="main">
+<div class="phone">
+  <div class="screen">
+
+    <!-- Header bar inside the phone card -->
+    <div class="phone-head">
+      <div>
+        <div class="phone-num">1092</div>
+        <div class="phone-sub">ಮಹಿಳೆಯರು ಮತ್ತು ಮಕ್ಕಳ ಸಹಾಯವಾಣಿ · महिला और बाल हेल्पलाइन · Women &amp; Child Helpline</div>
+      </div>
+      <span id="conn-tag" class="tag">disconnected</span>
+    </div>
+
+    <!-- ┃ NOT-IN-CALL view ┃ -->
+    <div id="not-started" class="phone-pad">
+      <div class="big-icon" aria-hidden="true">📞</div>
+      <h2>Connect to the helpline</h2>
+      <p class="phone-hint">
+        Speak naturally — Kannada, Hindi or English. The system will detect
+        your language automatically and listen to your concern.
+      </p>
+
+      <label class="phone-label" for="lang-pref">Preferred language (optional)</label>
+      <select id="lang-pref" class="input">
+        <option value="auto" selected>Auto-detect · ಸ್ವಯಂ-ಪತ್ತೆ · स्वतः पहचान</option>
+        <option value="kn">ಕನ್ನಡ · Kannada</option>
+        <option value="hi">हिन्दी · Hindi</option>
+        <option value="en">English</option>
+      </select>
+
+      <label class="phone-checkbox">
+        <input type="checkbox" id="share-location" />
+        <span>Share my approximate location with the responder
+          <small>(used only if the issue is location-sensitive)</small></span>
+      </label>
+
+      <button class="btn primary phone-cta" onclick="startCall()">📞 Start call</button>
+
+      <div class="trust-row">
+        <span class="trust-pill">🔒 PII redacted at edge</span>
+        <span class="trust-pill">🛡 Hash-chained audit</span>
+        <span class="trust-pill">🇮🇳 In-jurisdiction inference</span>
+      </div>
+      <p class="phone-foot">
+        For immediate danger, dial <strong>112</strong>. For child safety, dial
+        <strong>1098</strong>. For women in distress, dial <strong>181</strong>.
+      </p>
+    </div>
+
+    <!-- ┃ IN-CALL view — minimal, AI message dominant ┃ -->
+    <div id="in-call" class="hidden">
+
+      <!-- Strong system state banner — announced to screen readers on change -->
+      <div id="state-banner" class="state-banner IDLE" role="status" aria-live="polite" aria-atomic="true">
+        <span class="state-icon" id="state-icon" aria-hidden="true">⬤</span>
+        <div style="flex:1; min-width:0;">
+          <div class="state-label" id="state-banner-label">READY</div>
+          <div class="state-detail" id="state-banner-detail">Initializing…</div>
+        </div>
+      </div>
+
+      <!-- Spotlight: the AI's most recent message -->
+      <div id="ai-spotlight" class="ai-spotlight empty">
+        <div class="ai-spotlight-label">
+          <span id="ai-spotlight-icon">🔊</span>
+          <span id="ai-spotlight-who">Pratyaya</span>
+        </div>
+        <div id="ai-spotlight-text" class="ai-spotlight-text"></div>
+        <div id="ai-spotlight-roman" class="ai-spotlight-roman"></div>
+      </div>
+
+      <!-- Mic + level + status hint -->
+      <div class="mic-area">
+        <button id="mic-btn" class="mic-button" onclick="toggleManualMic()"
+                aria-label="Microphone">
+          <span id="mic-icon">🎙</span>
+        </button>
+        <div id="level-meter" class="meter level-meter" aria-hidden="true"><div class="fill"></div></div>
+        <div id="hint-text" class="phone-hint"></div>
+      </div>
+
+      <!-- "You said" — visible after each citizen turn -->
+      <div id="last-citizen" class="last-citizen hidden">
+        <div class="last-citizen-label">You said</div>
+        <div id="last-citizen-text"></div>
+        <div id="last-citizen-roman" class="roman"></div>
+      </div>
+
+      <!-- Confirmation buttons — visible during VERIFYING as a voice-fallback -->
+      <div id="confirm-bar" class="confirm-bar hidden">
+        <div class="confirm-bar-label">Or tap to respond</div>
+        <div class="confirm-bar-buttons">
+          <button class="btn primary" onclick="confirmManually('yes')">✔ Haudu / हाँ / Yes</button>
+          <button class="btn warn" onclick="confirmManually('partial')">~ Partial</button>
+          <button class="btn danger" onclick="confirmManually('no')">✖ Illa / नहीं / No</button>
+        </div>
+      </div>
+
+      <!-- Hidden mic-fallback (still kept for permission-denied case) -->
+      <div id="fallback-confirm" class="hidden fallback-confirm">
+        <span class="phone-hint">Mic unavailable — tap:</span>
+        <button class="btn primary btn-sm" onclick="confirmManually('yes')">✔ Haudu</button>
+        <button class="btn warn btn-sm" onclick="confirmManually('partial')">~ Partial</button>
+        <button class="btn danger btn-sm" onclick="confirmManually('no')">✖ Illa</button>
+      </div>
+
+      <!-- Foldable: full conversation history -->
+      <details class="dev-fold">
+        <summary>📜 Conversation history</summary>
+        <div id="transcript" class="transcript-clean"></div>
+      </details>
+
+      <!-- Dev-only scenarios — collapsed by default. Keeps the citizen UI clean
+           but lets developers exercise the pipeline without a mic. Add ?dev=1
+           to the URL to make this visible. -->
+      <details class="dev-fold dev-only">
+        <summary>🎬 Demo scenarios</summary>
+        <button class="demo-btn" onclick="useScenario(this)">ನಮ್ಮ ಪಕ್ಕದ ಮನೆಯವರು ಯಾಕ್ರಿ ಗಲಾಟೆ ಮಾಡ್ತಾ ಇದಾರೆ, ಒಬ್ಬ ಹೆಂಗಸನ್ನು ಹೊಡೀತಿದಾರೆ.</button>
+        <button class="demo-btn" onclick="useScenario(this)">ನನ್ನ ಗಂಡ ರೋಜು ಕುಡಿದು ಬಂದು ಹೊಡೆಯುತ್ತಾನೆ, ಬೆಂಗಳೂರು ಜಯನಗರದಲ್ಲಿ ಇದ್ದೀನಿ.</button>
+        <button class="demo-btn" onclick="useScenario(this)">मेरी बेटी कल से ग़ायब है, कोई फ़ोन कर रहा था धमकी दे रहा था।</button>
+        <button class="demo-btn" onclick="useScenario(this)">My neighbour's daughter is being harassed at school, please help.</button>
+      </details>
+
+      <!-- Foot controls -->
+      <div class="foot-row" style="margin-top: 14px;">
+        <button class="btn ghost btn-sm" onclick="hangup()">End call</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- End-of-call summary card (hidden until hangup completes). -->
+<div id="end-summary" class="end-summary hidden" role="dialog" aria-live="polite"></div>
+
+<footer class="citizen-foot">
+  <span>© Government of Karnataka · e-Governance</span>
+  <span>Confidential helpline · all calls logged on a tamper-evident chain</span>
+</footer>
+</main>
+
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+<script src="/static/citizen.js?v=1778130000"></script>
+<script>
+  // Reveal dev scenarios only when ?dev=1 is in the URL.
+  (function(){
+    try {
+      const dev = new URLSearchParams(location.search).get("dev") === "1";
+      if (!dev) document.querySelectorAll(".dev-only").forEach(el => el.style.display = "none");
+    } catch {}
+  })();
+</script>
+</body>
+</html>

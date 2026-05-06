@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c1a30" />
+<title>Pratyaya — 1092 Helpline AI Co-pilot</title>
+<meta name="description" content="An AI-assistive voice-to-voice layer for Karnataka's 1092 Women & Child Helpline. The citizen is heard. The understanding is verified — before any response is committed." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Noto+Sans+Kannada&family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css?v=1778200000">
+<script>
+  (function(){ try { const t = localStorage.getItem("pratyaya:theme"); if (t) document.documentElement.dataset.theme = t; } catch{} })();
+</script>
+</head>
+<body data-page="overview">
+<div id="shell-mount" data-title="Overview" data-crumb="Pratyaya · verified understanding · 1092 helpline" data-fluid="true">
+
+<!-- ─── Hero ────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="pillrow">
+    <span class="pill">🇮🇳 Karnataka · 1092 helpline</span>
+    <span class="pill">🗣 Kannada · Hindi · English</span>
+    <span class="pill">🛡 PII redacted at the edge</span>
+    <span class="pill">⛓ Hash-chained audit</span>
+  </div>
+  <h1>The citizen is heard.<br/><span class="accent">The understanding is verified.</span></h1>
+  <p class="lead">
+    Pratyaya is a real-time voice-to-voice assistive layer for Karnataka's
+    1092 helpline. It sits between the citizen and the agent, ensuring every
+    issue is accurately heard, interpreted, and verified — before any response
+    is committed. It never replaces the human, never auto-resolves a call,
+    and never acts without confirmation.
+  </p>
+  <div class="cta-row">
+    <a class="btn primary btn-lg" href="/agent">Open Agent Dashboard →</a>
+    <a class="btn btn-lg" href="/citizen" target="_blank">Try Citizen Demo</a>
+    <a class="btn ghost btn-lg" href="/analytics">View Civic Sensor</a>
+  </div>
+</section>
+
+<!-- ─── Civic anchor · Vidhana Soudha ───────────────────────────────────── -->
+<section class="vidhana-strip" aria-label="A service of the Government of Karnataka">
+  <div class="vidhana-strip-inner">
+    <div class="vidhana-image" role="img"
+         aria-label="Vidhana Soudha, the seat of Karnataka's state legislature in Bengaluru"></div>
+    <div class="vidhana-overlay">
+      <div class="vidhana-eyebrow">A service of the Government of Karnataka</div>
+      <h2 class="vidhana-headline">In service of every citizen who calls 1092.</h2>
+      <p class="vidhana-attrib">Vidhana Soudha · Bengaluru · Department of Personnel &amp; Administrative Reforms (e-Governance)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Capability grid ─────────────────────────────────────────────────── -->
+<section class="features" id="how-it-works">
+  <div class="feature">
+    <div class="icon">🎙️</div>
+    <h3>Multilingual streaming ASR</h3>
+    <p>Whisper Large v3 stands in for AI4Bharat IndicConformer + BharatGen Shrutam2 — handles native Kannada-English / Hindi-English code-mixing with per-segment confidence.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🗣️</div>
+    <h3>Dialect-aware routing</h3>
+    <p>Lexical heuristics + LLM classification distinguish Bangalore-standard, Dharwad, Mangaluru and Hyderabad-Karnataka Kannada. Verification paraphrases use the citizen's own dialect register.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🧠</div>
+    <h3>India-native NLU</h3>
+    <p>Sarvam-1 style structured extraction: issue type, urgency, location, named persons, factual claims, and an explicit clarification flag. Refuses to invent facts.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🚦</div>
+    <h3>Confidence-gated state machine</h3>
+    <p>VERIFIED · CLARIFY · HANDOVER. Disagreement between models, repeated clarifies, or extreme distress all formally escalate to the human agent.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">💓</div>
+    <h3>Six-dimensional sentiment</h3>
+    <p>distress · urgency · anger · fear · confusion · calm — fused from lexical and prosodic signals, updated every turn with a live trajectory chart.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🤝</div>
+    <h3>Graceful handover protocol</h3>
+    <p>A short bridging line spoken in the citizen's dialect, dashboard pre-populated with full context — the citizen never has to repeat themselves.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🔐</div>
+    <h3>PII redaction at the edge</h3>
+    <p>Phone, Aadhaar, email, long digit blocks redacted <strong>before</strong> any data is logged or sent to a language model.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">⛓️</div>
+    <h3>Hash-chained audit ledger</h3>
+    <p>Every turn, correction, confirmation, and handover is appended to a SHA-256 hash chain. Tampering with any past row breaks verification.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🌫️</div>
+    <h3>Shadow-mode rollout</h3>
+    <p>Per-call shadow toggle: the system listens, interprets, and updates the dashboard, but does NOT speak — until verification accuracy crosses the threshold per dialect.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">📈</div>
+    <h3>Civic sensor analytics</h3>
+    <p>The same loop that prevents misunderstanding produces a real-time map of what citizens are calling about, from which districts, in which dialects, and with what emotional urgency.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🌐</div>
+    <h3>Multilingual call summary</h3>
+    <p>One tap to translate the latest interpretation into Kannada / Hindi / English — agents can hand off to a colleague in any language without re-explaining.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">⚡</div>
+    <h3>Distress alerts &amp; shortcuts</h3>
+    <p>Agent UI flashes and beeps when distress crosses 0.75. Keyboard shortcuts: <kbd>H</kbd> hand over, <kbd>E</kbd> export, <kbd>V</kbd> verify chain, <kbd>Esc</kbd> end call, <kbd>Shift+T</kbd> toggle theme.</p>
+  </div>
+</section>
+
+<!-- ─── Evaluation rubric (panel) ───────────────────────────────────────── -->
+<section style="max-width: var(--w-content); margin: 0 auto var(--s-14); padding: 0 var(--s-5);">
+  <div class="panel" style="padding: 24px 28px;">
+    <div class="panel-title-row">
+      <h3 style="font-size: var(--fs-12);">Mapped to the evaluation rubric</h3>
+      <span class="tag green">100% covered</span>
+    </div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s-3);">
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Voice-to-voice effectiveness · 25%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">Whisper Large v3 + Edge Neural TTS + VAD-based auto-listen + audible turn cues + Roman transliteration line under every Kannada/Hindi message.</span>
+      </div>
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Verification &amp; guardrails · 20%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">3-state machine · voice-classified haudu/illa/partial · severity-aware escalation · SHA-256 hash-chained audit · PII redaction at the call edge.</span>
+      </div>
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Dialect &amp; cultural understanding · 15%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">4-way Kannada dialect classifier · Whisper prompt-priming · paraphrases preserve dialect register · trilingual call summary.</span>
+      </div>
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Sentiment &amp; emotional interpretation · 15%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">6-D lexical + prosodic fusion (distress · urgency · anger · fear · confusion · calm) drives auto-handover thresholds and live trajectory.</span>
+      </div>
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Ease of use for agents · 15%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">Three-zone dashboard (Citizen Mirror · AI Understanding · Agent Control) · inline-editable fields · keyboard shortcuts · multilingual summary · phone notification.</span>
+      </div>
+      <div class="kv" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 14px; background: var(--panel-2); border-radius: var(--r-md);">
+        <span class="k">Technical design &amp; extensibility · 10%</span>
+        <span class="v" style="text-align: left; font-weight: var(--weight-medium); color: var(--text-2); font-size: var(--fs-13); line-height: 1.5;">Modular service architecture · pluggable storage (SQLite ↔ Postgres) · async parallel pipeline · single-file model swap-points · open-source critical path.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Emergency band ──────────────────────────────────────────────────── -->
+<section style="max-width: var(--w-content); margin: 0 auto var(--s-10); padding: 0 var(--s-5);">
+  <div class="panel" style="padding: 18px 22px; background: var(--saffron-soft); border-color: color-mix(in srgb, var(--saffron) 35%, transparent);">
+    <div class="row-flex" style="justify-content: space-between; gap: var(--s-4);">
+      <div>
+        <div class="eyebrow" style="color: var(--saffron-deep); margin-bottom: 6px;">For immediate danger</div>
+        <p class="muted" style="margin: 0; font-size: var(--fs-13); line-height: 1.55;">
+          Pratyaya is an assistive layer, not a substitute for emergency services.
+          For active danger, dial these numbers directly.
+        </p>
+      </div>
+      <div class="row-flex" style="gap: 10px;">
+        <span class="tag" style="font-size: var(--fs-13); padding: 6px 12px; background: var(--panel); border-color: var(--saffron);">
+          <strong>112</strong> · all-emergency
+        </span>
+        <span class="tag" style="font-size: var(--fs-13); padding: 6px 12px; background: var(--panel); border-color: var(--saffron);">
+          <strong>1098</strong> · child line
+        </span>
+        <span class="tag" style="font-size: var(--fs-13); padding: 6px 12px; background: var(--panel); border-color: var(--saffron);">
+          <strong>181</strong> · women in distress
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /shell-mount -->
+
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+<script src="/static/sidebar.js?v=1778200000"></script>
+<script src="/static/theme.js?v=1778200000"></script>
+</body>
+</html>

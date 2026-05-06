@@ -1,0 +1,48 @@
+{
+  "task": "transcribe",
+  "language": "Kannada",
+  "duration": 2,
+  "text": " ಮಾಕೆದ್ದಿಲ್ಲು",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 2,
+      "text": " ಮಾಕೆದ್ದಿಲ್ಲು",
+      "tokens": [
+        50365,
+        34725,
+        106,
+        11891,
+        122,
+        11891,
+        243,
+        24998,
+        228,
+        11891,
+        99,
+        44833,
+        11891,
+        99,
+        11891,
+        123,
+        11891,
+        110,
+        44833,
+        11891,
+        110,
+        24998,
+        223,
+        50465
+      ],
+      "temperature": 0.8,
+      "avg_logprob": -0.96169645,
+      "compression_ratio": 0.9230769,
+      "no_speech_prob": 0.8369312
+    }
+  ],
+  "x_groq": {
+    "id": "req_01kqyh7q6yemhrxkgbqtn7vskm"
+  }
+}

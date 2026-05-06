@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c1a30" />
+<title>Pratyaya — Agent Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Noto+Sans+Kannada&family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css?v=1778130000">
+<script>
+  (function() { try {
+    const t = localStorage.getItem("pratyaya:theme");
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  } catch {} })();
+</script>
+</head>
+<body data-page="agent">
+
+<!-- Government attribution banner -->
+<div class="gov-banner">
+  <div class="left">
+    <span>Government of Karnataka</span>
+    <span>Department of Personnel &amp; Administrative Reforms (e-Governance)</span>
+    <span>1092 · Women &amp; Child Helpline</span>
+  </div>
+  <div class="right">Pratyaya · Agent Dashboard</div>
+</div>
+
+<div id="shell-mount" data-title="Agent Dashboard" data-crumb="Citizen mirror · AI understanding · Agent control">
+
+  <!-- ============================================================
+       STICKY HANDOVER BAR — pinned to the top of the dashboard the
+       moment the system hands a call to the agent. This is where the
+       agent acts: speaks via the mic, sees who the citizen is, what
+       the issue is, what the citizen just said. Hidden until needed.
+       ============================================================ -->
+  <div id="handover-bar" class="handover-bar hidden" role="region"
+       aria-label="Active handover — speak to citizen">
+    <div class="handover-bar-head">
+      <span class="handover-bar-pulse"></span>
+      <div>
+        <div class="handover-bar-title">HANDOVER · speak to the citizen</div>
+        <div class="handover-bar-sub" id="ho-sub">connecting…</div>
+      </div>
+      <span class="handover-bar-timer" id="ho-timer">00:00</span>
+    </div>
+
+    <div class="handover-bar-grid">
+      <!-- Left: live mic + send -->
+      <div class="handover-bar-mic">
+        <button id="ho-mic-btn" class="ho-mic-btn"
+                onclick="toggleOperatorMic()"
+                title="Click to talk — speech translated and spoken to citizen"
+                aria-label="Operator microphone">
+          <span aria-hidden="true">🎙</span>
+          <span class="ho-mic-label">Push to talk</span>
+        </button>
+        <div id="ho-mic-status" class="handover-bar-mic-status"></div>
+      </div>
+
+      <!-- Right: typed reply (always available as a fallback / extra channel) -->
+      <div class="handover-bar-reply">
+        <input id="ho-input" class="input"
+               placeholder="…or type in English. Pratyaya translates + speaks it to the citizen."
+               onkeydown="if(event.key==='Enter') sendOperatorMessage()" />
+        <button class="btn primary" onclick="sendOperatorMessage()">Send → speak</button>
+      </div>
+    </div>
+
+    <!-- Live citizen audio (post-handover transcript) -->
+    <div class="handover-bar-citizen" id="ho-citizen">
+      <span class="handover-bar-citizen-label">Citizen says (live)</span>
+      <span id="ho-citizen-text" class="handover-bar-citizen-text">—</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOP WIDGETS ROW — at-a-glance state of the helpline.
+       Sentiment radar (live current call) · Call state distribution ·
+       Dialect distribution. Rendered with Chart.js (already loaded).
+       ============================================================ -->
+  <div class="widgets-row">
+    <div class="widget">
+      <div class="widget-head">
+        <span class="widget-title">Live sentiment · 6-D</span>
+        <span class="widget-sub" id="widget-sent-sub">awaiting first turn</span>
+      </div>
+      <div class="widget-body"><canvas id="widget-sent-radar"></canvas></div>
+    </div>
+    <div class="widget">
+      <div class="widget-head">
+        <span class="widget-title">Call states</span>
+        <span class="widget-sub" id="widget-state-sub">aggregate</span>
+      </div>
+      <div class="widget-body"><canvas id="widget-state-pie"></canvas></div>
+    </div>
+    <div class="widget">
+      <div class="widget-head">
+        <span class="widget-title">Dialects heard</span>
+        <span class="widget-sub" id="widget-dialect-sub">aggregate</span>
+      </div>
+      <div class="widget-body"><canvas id="widget-dialect-pie"></canvas></div>
+    </div>
+    <div class="widget widget-stat">
+      <div class="widget-stat-label">Live calls</div>
+      <div class="widget-stat-value" id="kpi-live">0</div>
+      <div class="widget-stat-foot">verified · clarified · escalated</div>
+      <div class="widget-stat-row">
+        <span class="kpi-chip kpi-verified"><b id="kpi-verified">0</b> verified</span>
+        <span class="kpi-chip kpi-clarify"><b id="kpi-clarify">0</b> clarify</span>
+        <span class="kpi-chip kpi-handover"><b id="kpi-handover">0</b> handover</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+  <!-- ZONE A — CITIZEN MIRROR -->
+  <div class="col col-left">
+    <div class="zone-header">
+      <span class="zone-tag">A</span>
+      <span class="zone-name">Citizen mirror</span>
+      <span style="margin-left:auto;">live calls · stats · audit</span>
+    </div>
+    <div class="panel">
+      <h3>System stats</h3>
+      <div id="stats"></div>
+      <div style="margin-top:10px;">
+        <button class="btn" onclick="verifyChain()">Verify audit chain</button>
+        <div id="chain-status" style="margin-top:8px; font-size:12px;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Shortcuts</h3>
+      <div class="kv"><span class="k">Toggle theme</span><span class="v"><kbd>Shift+T</kbd></span></div>
+      <div class="kv"><span class="k">Hand over</span><span class="v"><kbd>H</kbd></span></div>
+      <div class="kv"><span class="k">End call</span><span class="v"><kbd>Esc</kbd></span></div>
+      <div class="kv"><span class="k">Verify chain</span><span class="v"><kbd>V</kbd></span></div>
+      <div class="kv"><span class="k">Export call</span><span class="v"><kbd>E</kbd></span></div>
+    </div>
+  </div>
+
+  <!-- ZONE B — AI UNDERSTANDING -->
+  <div class="col col-center">
+    <div class="zone-header">
+      <span class="zone-tag">B</span>
+      <span class="zone-name">AI understanding</span>
+      <span style="margin-left:auto;">transcript · sentiment · interpretation</span>
+    </div>
+
+    <div class="panel">
+      <div class="row-flex" style="justify-content: space-between;">
+        <div style="min-width: 0;">
+          <h3 style="margin:0;">Active call</h3>
+          <div class="mono" style="color:var(--muted); font-size:13px; margin-top:4px;" id="active-call-id">— no call selected —</div>
+        </div>
+        <div class="row-flex">
+          <span id="call-timer" class="timer hidden">⏱ <span id="timer-text">00:00</span></span>
+          <span id="state-badge" class="state-pill CLARIFY">CLARIFY</span>
+        </div>
+      </div>
+      <div class="row-flex" style="margin-top: 14px;">
+        <div class="toggle-row" style="flex:1; min-width:240px;">
+          <div class="label-row">
+            <strong>Shadow mode</strong>
+            <small>System listens but does NOT speak — for staged rollout</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="shadow-toggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button class="btn warn" onclick="manualHandover()" title="H">⤴ Hand over</button>
+        <button class="btn" onclick="exportCall()" title="E">📤 Export</button>
+        <button class="btn" onclick="refreshSummary()" title="Refresh multilingual summary">🌐 Summary</button>
+        <button class="btn danger" onclick="endCall()" title="Esc">End call</button>
+      </div>
+    </div>
+
+    <!-- Caller context — repeat-caller detection + opt-in geolocation.
+         Hidden until the call_started WS event arrives. -->
+    <div class="panel caller-card" id="caller-card" style="display:none;"></div>
+
+    <div class="panel">
+      <h3>Confidence &amp; decision</h3>
+      <!-- Three-tier band: green ≥ 80% (auto proceed), amber 50–80%
+           (re-verify), red < 50% (human takeover). The decision label
+           below mirrors the state machine's verdict for this turn. -->
+      <div id="conf-tier" class="conf-tier conf-tier--unknown">
+        <div class="conf-tier-head">
+          <span class="conf-tier-pct" id="conf-tier-pct">—</span>
+          <span class="conf-tier-label" id="conf-tier-label">awaiting first turn</span>
+        </div>
+        <div class="conf-tier-action" id="conf-tier-action">—</div>
+      </div>
+      <div class="bar-row"><span class="label">Overall</span>
+        <div class="meter" id="meter-overall"><div class="fill" style="width:0%;"></div></div>
+        <span class="val" id="val-overall">—</span></div>
+      <div class="bar-row"><span class="label">ASR</span>
+        <div class="meter" id="meter-asr"><div class="fill" style="width:0%;"></div></div>
+        <span class="val" id="val-asr">—</span></div>
+      <div class="bar-row"><span class="label">Intent</span>
+        <div class="meter" id="meter-intent"><div class="fill" style="width:0%;"></div></div>
+        <span class="val" id="val-intent">—</span></div>
+      <div class="bar-row"><span class="label">Dialect</span>
+        <div class="meter" id="meter-dialect"><div class="fill" style="width:0%;"></div></div>
+        <span class="val" id="val-dialect">—</span></div>
+      <div id="state-reasons" style="font-size:12px; color:var(--muted); margin-top:6px;"></div>
+
+      <!-- Explainability — every escalation decision is broken down into the
+           discrete signals (keyword, emotion, confidence, severity) that
+           drove it, so the agent and any reviewer can see WHY at a glance. -->
+      <details class="why-card" id="why-card">
+        <summary>WHY this decision?</summary>
+        <ul id="why-list" class="why-list"></ul>
+      </details>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title-row">
+        <h3>Live transcript</h3>
+        <span class="tag" id="turn-count">0 turns</span>
+      </div>
+      <div id="transcript" class="transcript" aria-live="polite">
+        <div class="placeholder">Waiting for the citizen to speak…</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title-row">
+        <h3>Multilingual call summary</h3>
+        <span class="tag" id="summary-status">—</span>
+      </div>
+      <div class="multilang" id="multilang">
+        <div class="lang-card"><div class="lang-label">🇮🇳 ಕನ್ನಡ · Kannada</div>
+          <div class="lang-text" id="sum-kn" style="font-family:'Noto Sans Kannada','Inter',sans-serif;">—</div></div>
+        <div class="lang-card"><div class="lang-label">🇮🇳 हिन्दी · Hindi</div>
+          <div class="lang-text" id="sum-hi" style="font-family:'Noto Sans Devanagari','Inter',sans-serif;">—</div></div>
+        <div class="lang-card"><div class="lang-label">🇬🇧 English</div>
+          <div class="lang-text" id="sum-en">—</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title-row">
+        <h3>Structured interpretation</h3>
+        <span class="tag violet">editable · inline</span>
+      </div>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div>
+          <div class="kv"><span class="k">Issue type</span>
+            <span class="v editable" data-field="issue_type" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Urgency</span>
+            <span class="v editable" data-field="urgency_level" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Language</span>
+            <span class="v" id="kv-lang">—</span></div>
+          <div class="kv"><span class="k">Dialect</span>
+            <span class="v editable" data-field="dialect" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Location</span>
+            <span class="v editable" data-field="location" contenteditable="true">—</span></div>
+        </div>
+        <div>
+          <div class="kv"><span class="k">Persons</span>
+            <span class="v editable" data-field="persons" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Organizations</span>
+            <span class="v editable" data-field="organizations" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Time refs</span>
+            <span class="v editable" data-field="time_references" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">Objects</span>
+            <span class="v editable" data-field="objects" contenteditable="true">—</span></div>
+          <div class="kv"><span class="k">PII redacted</span>
+            <span class="v" id="kv-pii">—</span></div>
+        </div>
+      </div>
+      <div class="section-title">Issue summary (English)</div>
+      <div class="editable" data-field="issue_summary" contenteditable="true" id="summary-box"
+           style="padding:10px; background:var(--panel-2); border-radius:10px; font-size:14px;">—</div>
+      <div class="section-title">Factual claims</div>
+      <ul id="claims-list" style="margin:0; padding-left:18px;"></ul>
+    </div>
+
+    <!-- Operator reply (web-to-web handover) -->
+    <div class="panel">
+      <div class="panel-title-row">
+        <h3>Operator reply (speaks to citizen)</h3>
+        <span class="tag" id="op-target-lang">—</span>
+      </div>
+      <p class="muted" style="font-size: 12px; margin: 0 0 8px;">
+        Speak or type in English. Pratyaya translates to the citizen's language
+        and speaks it aloud over their call.
+      </p>
+      <div style="display: flex; gap: 8px; align-items: stretch;">
+        <button id="op-mic-btn" class="btn icon-btn" onclick="toggleOperatorMic()"
+                title="Hold to talk — browser STT"
+                aria-label="Operator microphone">🎙</button>
+        <input id="op-input" class="input"
+               placeholder="e.g. Don't worry, can you tell me where you are right now?"
+               onkeydown="if(event.key==='Enter') sendOperatorMessage()" />
+        <button class="btn primary" onclick="sendOperatorMessage()">Send → Speak</button>
+      </div>
+      <div id="op-mic-status" class="muted" style="font-size: 11px; margin-top: 4px;"></div>
+      <div id="op-history" style="margin-top: 10px; max-height: 160px; overflow-y: auto;"></div>
+    </div>
+
+  </div>
+
+  <!-- ZONE C — AGENT CONTROL -->
+  <div class="col col-right">
+    <div class="zone-header">
+      <span class="zone-tag">C</span>
+      <span class="zone-name">Agent control</span>
+      <span style="margin-left:auto;">sentiment · operator reply · audit</span>
+    </div>
+    <div class="panel">
+      <div class="panel-title-row">
+        <h3>Sentiment (6-D)</h3>
+        <span id="sent-trend" class="tag">—</span>
+      </div>
+      <div id="sentiment-bars"></div>
+    </div>
+
+    <div class="panel">
+      <h3>AI suggestion</h3>
+      <div id="ai-paraphrase" class="bubble system" style="display:none;"></div>
+      <div id="ai-confirm" class="bubble" style="display:none;"></div>
+      <div id="ai-bridge" class="bubble handover" style="display:none;"></div>
+      <div id="ai-empty" class="placeholder">No suggestion yet.</div>
+
+      <!-- Ethical guardrails — visible contract between the agent, the
+           citizen, and the auditor. Listed even when implemented because
+           transparency itself is part of the requirement. -->
+      <div class="guardrails" aria-label="Ethical guardrails">
+        <h4>Ethical guardrails</h4>
+        <ul>
+          <li>The system never asserts a crime — only what the citizen said.</li>
+          <li>If understanding confidence drops, the AI asks again or hands over.</li>
+          <li>Severe issues (harassment, stalking, missing) always escalate to a human.</li>
+          <li>PII is redacted at the call edge before any LLM sees it.</li>
+          <li>The human officer's decision is always final and overrides the AI.</li>
+          <li>Every action is appended to a hash-chained audit ledger.</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="panel" id="adv-trajectory">
+      <summary class="adv-summary">Sentiment trajectory <span class="muted" style="font-weight:400;font-size:11px;">(advanced)</span></summary>
+      <div class="chart-wrap" style="margin-top: 10px;"><canvas id="sentiment-chart"></canvas></div>
+    </details>
+
+    <details class="panel" id="adv-audit">
+      <summary class="adv-summary">Audit ledger <span class="tag" id="ledger-count" style="margin-left:6px;">0</span></summary>
+      <div id="ledger" class="scroll" style="margin-top: 10px;"></div>
+    </details>
+
+    <details class="panel" id="adv-privacy">
+      <summary class="adv-summary">Privacy &amp; jurisdiction</summary>
+      <div style="font-size: 13px; color: var(--text-2); line-height: 1.6; margin-top: 10px;">
+        ✓ PII redacted at the edge before storage<br/>
+        ✓ All inference within Indian jurisdiction<br/>
+        ✓ Hash-chained audit · every access logged<br/>
+        ✓ No closed-source critical path
+      </div>
+    </details>
+  </div>
+  </div><!-- /layout -->
+
+</div><!-- /shell-mount -->
+
+<div class="alert-flash" id="alert-flash" aria-hidden="true"></div>
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/static/sidebar.js?v=1778130000"></script>
+<script src="/static/theme.js?v=1778130000"></script>
+<script src="/static/app.js?v=1778130000"></script>
+</body>
+</html>

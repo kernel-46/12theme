@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c1a30" />
+<title>Pratyaya — Civic Sensor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&family=Noto+Sans+Kannada&family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css?v=1777997099">
+<script>
+  (function(){ try { const t = localStorage.getItem("pratyaya:theme"); if (t) document.documentElement.dataset.theme = t; } catch{} })();
+</script>
+</head>
+<body data-page="analytics">
+<div id="shell-mount" data-title="Civic Sensor" data-crumb="Real-time map of citizen concerns">
+
+<div class="analytics">
+
+  <div class="panel" style="margin-bottom: 16px;">
+    <div class="panel-title-row">
+      <h3>Live civic snapshot</h3>
+      <div class="row-flex">
+        <span id="last-updated" class="tag">—</span>
+        <button class="btn" onclick="refreshAll()">↻ Refresh</button>
+      </div>
+    </div>
+    <p class="muted" style="margin: 0; line-height: 1.6;">
+      Pratyaya doubles as a passive civic sensor. The same loop that prevents
+      misunderstanding produces, as a by-product, a real-time map of what citizens
+      are calling about, from which districts, in which dialects, and with what
+      emotional urgency.
+    </p>
+  </div>
+
+  <div class="analytics-grid">
+    <div class="metric-card">
+      <div class="label">Total calls</div>
+      <div class="value" id="m-total">0</div>
+      <div class="delta" id="m-total-d">all-time</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Live now</div>
+      <div class="value" id="m-live">0</div>
+      <div class="delta">active citizen lines</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Verified rate</div>
+      <div class="value" id="m-verified">—</div>
+      <div class="delta">turns reaching VERIFIED</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Handover rate</div>
+      <div class="value" id="m-handover">—</div>
+      <div class="delta">turns escalated to human</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Avg distress</div>
+      <div class="value" id="m-distress">—</div>
+      <div class="delta">across all turns</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Audit chain</div>
+      <div class="value" id="m-audit" style="font-size: 22px;">—</div>
+      <div class="delta" id="m-audit-d">—</div>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div class="panel">
+      <h3>Issue type distribution</h3>
+      <div class="chart-tall"><canvas id="issue-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Urgency mix</h3>
+      <div class="chart-tall"><canvas id="urgency-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div class="panel">
+      <h3>Calls by language</h3>
+      <div class="chart-wrap"><canvas id="lang-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Calls by dialect</h3>
+      <div class="dist-list" id="dialect-list"></div>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div class="panel">
+      <h3>State machine outcomes</h3>
+      <div class="chart-wrap"><canvas id="state-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Top reported locations</h3>
+      <div class="dist-list" id="location-list">
+        <div class="placeholder">no data yet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom: 16px;">
+    <h3>Sentiment heat — last 30 turns</h3>
+    <div class="chart-tall"><canvas id="sent-heat-chart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h3>Recent calls</h3>
+    <div id="recent-calls" class="scroll" style="max-height: 360px;"></div>
+  </div>
+
+</div>
+
+</div><!-- /shell-mount -->
+
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/static/sidebar.js?v=1777997099"></script>
+<script src="/static/theme.js?v=1777997099"></script>
+<script src="/static/analytics.js?v=1777997099"></script>
+</body>
+</html>
